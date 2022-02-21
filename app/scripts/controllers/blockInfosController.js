@@ -1,15 +1,13 @@
 angular.module('ethExplorer')
     .controller('blockInfosCtrl', function ($rootScope, $scope, $location, $routeParams,$q) {
 
-	var web3 = $rootScope.web3;
+   var web3 = $rootScope.web3;
 
         $scope.init = function()
         {
-
             $scope.blockId = $routeParams.blockId;
 
             if($scope.blockId!==undefined) {
-
                 getBlockInfos()
                     .then(function(result){
                         var number = web3.eth.blockNumber;
@@ -41,29 +39,27 @@ angular.module('ethExplorer')
                     $scope.extraData = result.extraData;
                     $scope.dataFromHex = hex2a(result.extraData);
                     $scope.size = result.size;
+                    $scope.time = time2d(result.timestamp);
                     if($scope.blockNumber!==undefined){
                         $scope.conf = number - $scope.blockNumber + " Confirmations";
                         if($scope.conf===0 + " Confirmations"){
                             $scope.conf='Unconfirmed';
                         }
                     }
-                    if($scope.blockNumber!==undefined){
+                    /*if($scope.blockNumber!==undefined){
                         var info = web3.eth.getBlock($scope.blockNumber);
                         if(info!==undefined){
                             var newDate = new Date();
                             newDate.setTime(info.timestamp*1000);
                             $scope.time = newDate.toUTCString();
                         }
-                    }
-
-
+                    }*/
 
                 });
 
             } else {
                 $location.path("/");
             }
-
 
             function getBlockInfos() {
                 var deferred = $q.defer();
@@ -115,4 +111,11 @@ function hex2a(hexx) {
         str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
     return str;
 }
+
+//timestamp to date
+function time2d(time) {
+    var date = new Date(time*1000);//force conversion 
+    return date.toUTCString();
+}
+
 });
